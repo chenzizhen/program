@@ -1,0 +1,1 @@
+awk '{if($2~/0|16/) {print $0;}}' asxl1.sam > asxl1.unique.sam
