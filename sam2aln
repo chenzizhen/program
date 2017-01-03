@@ -5,8 +5,8 @@ open MAP_FH,'>','/leofs/wangqf_group/zhanglx/yang/bwa/CON.aln'or die "$!";
 while(my $lines = <SAM_FH>){
 	chomp($lines);
 	my @lines = split"\t",$lines;
-	if ($lines[1] == 0){printf MAP_FH "%s\t%s\t%s\n",$lines[2],$lines[3],F;}
-	elsif ($lines[1] == 16){printf MAP_FH "%s\t%s\t%s\n",$lines[2],$lines[3],R;}
+	if ($lines[2] == 0){printf MAP_FH "%s\t%s\t%s\n",$lines[2],$lines[3],F;}
+	elsif ($lines[2] == 16){printf MAP_FH "%s\t%s\t%s\n",$lines[2],$lines[3],R;}
 }
 close SAM_FH;
 close MAP_FH;
