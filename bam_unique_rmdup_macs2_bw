@@ -1,0 +1,74 @@
+cd /Volumes/myMAC/asxl1uniquesam/asxl1bam
+samtools view -h /Volumes/myMAC/asxl1chipseq/asxl1bam/input.sort.rmdup.bam -o input.sam
+awk '{if(NR<=22){print $0}else if ($3~/0|16/) {print $0}}'  input.sam > input.unique.sam
+samtools view input.unique.sam -o input.bam
+samtools sort input.bam -o input.sort.bam
+samtools rmdup -s input.sort.bam input.sort.rmdup.bam
+
+samtools view -h /Volumes/myMAC/asxl1chipseq/asxl1bam/KO_H3K4me2.sort.rmdup.bam -o KO_H3K4me2.sam
+awk '{if(NR<=22){print $0}else if ($3~/0|16/) {print $0}}'  KO_H3K4me2.sam > KO_H3K4me2.unique.sam
+samtools view KO_H3K4me2.unique.sam -o KO_H3K4me2.bam
+samtools sort KO_H3K4me2.bam -o KO_H3K4me2.sort.bam
+samtools rmdup -s KO_H3K4me2.sort.bam KO_H3K4me2.sort.rmdup.bam
+macs2 callpeak -t KO_H3K4me2.sort.rmdup.bam -c input.sort.rmdup.bam -B --SPMR -g mm -n KO_H3K4me2 --outdir /Volumes/myMAC/asxl1uniquesam/KO_H3K4me2/macs2spmr
+cd /Volumes/myMAC/asxl1uniquesam/KO_H3K4me2/macs2spmr
+macs2 bdgcmp -t KO_H3K4me2_treat_pileup.bdg -c KO_H3K4me2_control_lambda.bdg -o KO_H3K4me2_FE.bdg -m FE
+LC_COLLATE=C sort -k1,1 -k2,2n KO_H3K4me2_FE.bdg > KO_H3K4me2_FE_sorted.bdg
+/Volumes/myMAC/asxl1chipseq/bdg2bw KO_H3K4me2_FE_sorted.bdg /Volumes/myMAC/asxl1chipseq/mm9.len
+cp KO_H3K4me2_FE_sorted.bw /Volumes/myMAC/asxl1uniquesam/asxl1bw/
+
+cd /Volumes/myMAC/asxl1uniquesam/asxl1bam
+samtools view -h /Volumes/myMAC/asxl1chipseq/asxl1bam/WT_H3K4me2.sort.rmdup.bam -o WT_H3K4me2.sam
+awk '{if(NR<=22){print $0}else if ($3~/0|16/) {print $0}}' WT_H3K4me2.sam > WT_H3K4me2.unique.sam
+samtools view WT_H3K4me2.unique.sam -o WT_H3K4me2.bam
+samtools sort WT_H3K4me2.bam -o WT_H3K4me2.sort.bam
+samtools rmdup -s WT_H3K4me2.sort.bam WT_H3K4me2.sort.rmdup.bam
+macs2 callpeak -t WT_H3K4me2.sort.rmdup.bam -c input.sort.rmdup.bam -B --SPMR -g mm -n WT_H3K4me2 --outdir /Volumes/myMAC/asxl1uniquesam/WT_H3K4me2/macs2spmr
+cd /Volumes/myMAC/asxl1uniquesam/WT_H3K4me2/macs2spmr
+macs2 bdgcmp -t WT_H3K4me2_treat_pileup.bdg -c WT_H3K4me2_control_lambda.bdg -o WT_H3K4me2_FE.bdg -m FE
+LC_COLLATE=C sort -k1,1 -k2,2n WT_H3K4me2_FE.bdg > WT_H3K4me2_FE_sorted.bdg
+/Volumes/myMAC/asxl1chipseq/bdg2bw WT_H3K4me2_FE_sorted.bdg /Volumes/myMAC/asxl1chipseq/mm9.len
+cp WT_H3K4me2_FE_sorted.bw /Volumes/myMAC/asxl1uniquesam/asxl1bw/
+
+cd /Volumes/myMAC/asxl1uniquesam/asxl1bam
+samtools view -h /Volumes/myMAC/asxl1chipseq/asxl1bam/KO_H2AK119Ub.sort.rmdup.bam -o KO_H2AK119Ub.sam
+awk '{if(NR<=22){print $0}else if ($3~/0|16/) {print $0}}' KO_H2AK119Ub.sam > KO_H2AK119Ub.unique.sam
+samtools view KO_H2AK119Ub.unique.sam -o KO_H2AK119Ub.bam
+samtools sort KO_H2AK119Ub.bam -o KO_H2AK119Ub.sort.bam
+samtools rmdup -s KO_H2AK119Ub.sort.bam KO_H2AK119Ub.sort.rmdup.bam
+macs2 callpeak -t KO_H2AK119Ub.sort.rmdup.bam -c input.sort.rmdup.bam -B --SPMR -g mm -n KO_H2AK119Ub --outdir /Volumes/myMAC/asxl1uniquesam/KO_H2AK119Ub/macs2spmr
+cd /Volumes/myMAC/asxl1uniquesam/KO_H2AK119Ub/macs2spmr
+macs2 bdgcmp -t KO_H2AK119Ub_treat_pileup.bdg -c KO_H2AK119Ub_control_lambda.bdg -o KO_H2AK119Ub_FE.bdg -m FE
+LC_COLLATE=C sort -k1,1 -k2,2n KO_H2AK119Ub_FE.bdg > KO_H2AK119Ub_FE_sorted.bdg
+/Volumes/myMAC/asxl1chipseq/bdg2bw KO_H2AK119Ub_FE_sorted.bdg /Volumes/myMAC/asxl1chipseq/mm9.len
+cp KO_H2AK119Ub_FE_sorted.bw /Volumes/myMAC/asxl1uniquesam/asxl1bw/
+
+cd /Volumes/myMAC/asxl1uniquesam/asxl1bam
+samtools view -h /Volumes/myMAC/asxl1chipseq/asxl1bam/WT_H2AK119Ub.sort.rmdup.bam -o WT_H2AK119Ub.sam
+awk '{if(NR<=22){print $0}else if ($3~/0|16/) {print $0}}' WT_H2AK119Ub.sam > WT_H2AK119Ub.unique.sam
+samtools view WT_H2AK119Ub.unique.sam -o WT_H2AK119Ub.bam
+samtools sort WT_H2AK119Ub.bam -o WT_H2AK119Ub.sort.bam
+samtools rmdup -s WT_H2AK119Ub.sort.bam WT_H2AK119Ub.sort.rmdup.bam
+macs2 callpeak -t WT_H2AK119Ub.sort.rmdup.bam -c input.sort.rmdup.bam -B --SPMR -g mm -n WT_H2AK119Ub --outdir /Volumes/myMAC/asxl1uniquesam/WT_H2AK119Ub/macs2spmr
+cd /Volumes/myMAC/asxl1uniquesam/WT_H2AK119Ub/macs2spmr
+macs2 bdgcmp -t WT_H2AK119Ub_treat_pileup.bdg -c WT_H2AK119Ub_control_lambda.bdg -o WT_H2AK119Ub_FE.bdg -m FE
+LC_COLLATE=C sort -k1,1 -k2,2n WT_H2AK119Ub_FE.bdg > WT_H2AK119Ub_FE_sorted.bdg
+/Volumes/myMAC/asxl1chipseq/bdg2bw WT_H2AK119Ub_FE_sorted.bdg /Volumes/myMAC/asxl1chipseq/mm9.len
+cp WT_H2AK119Ub_FE_sorted.bw /Volumes/myMAC/asxl1uniquesam/asxl1bw/
+
+cd /Volumes/myMAC/asxl1uniquesam/profile
+computeMatrix reference-point -R ../bed/mm9gene.bed -S ../asxl1bw/WT_H3K4me2_FE_sorted.bw ../asxl1bw/KO_H3K4me2_FE_sorted.bw -out WT_KO_H3K4me2_TSS.gz -a 5000 -b 5000 -bs 100 --skipZeros
+plotProfile --yMin 0 -m WT_KO_H3K4me2_TSS.gz --perGroup -out WT_KO_H3K4me2_TSS.pdf
+computeMatrix reference-point -R ../bed/mm9gene.bed -S ../asxl1bw/WT_H2AK119Ub_FE_sorted.bw ../asxl1bw/KO_H2AK119Ub_FE_sorted.bw -out WT_KO_H2AK119Ub_TSS.gz -a 5000 -b 5000 -bs 100 --skipZeros
+plotProfile --yMin 0 -m WT_KO_H2AK119Ub_TSS.gz --perGroup -out WT_KO_H2AK119Ub_TSS.pdf
+
+computeMatrix scale-regions -R ../bed/mm9gene.bed -S ../asxl1bw/WT_H2AK119Ub_FE_sorted.bw ../asxl1bw/KO_H2AK119Ub_FE_sorted.bw -out WT_KO_H2AK119Ub_region.gz -a 3000 -b 3000 -m 6000 -bs 100 --skipZeros
+plotProfile --yMin 0 -m WT_KO_H2AK119Ub_region.gz --perGroup -out WT_KO_H2AK119Ub_region.pdf
+computeMatrix scale-regions -R ../bed/mm9gene.bed -S ../asxl1bw/WT_H3K4me2_FE_sorted.bw ../asxl1bw/KO_H3K4me2_FE_sorted.bw -out WT_KO_H3K4me2_region.gz -a 3000 -b 3000 -m 6000 -bs 100 --skipZeros
+plotProfile --yMin 0 -m WT_KO_H3K4me2_region.gz --perGroup -out WT_KO_H3K4me2_region.pdf
+
+computeMatrix reference-point -R ../bed/exp/dn.bed -S ../asxl1bw/WT_H3K4me2_FE_sorted.bw ../asxl1bw/KO_H3K4me2_FE_sorted.bw -out ./dn/dn_gene_H3K4me2_TSS.gz -a 5000 -b 5000 -bs 100 --skipZeros
+plotProfile --yMin 0 -m ./dn/dn_gene_H3K4me2_TSS.gz --perGroup -out ./dn/dn_gene_H3K4me2_TSS.pdf
+
+computeMatrix scale-regions -R ../bed/exp/dn.bed -S ../asxl1bw/WT_H3K4me2_FE_sorted.bw ../asxl1bw/KO_H3K4me2_FE_sorted.bw -out ./dn/dn_gene_H3K4me2_region.gz -a 3000 -b 3000 -m 6000 -bs 100 --skipZeros
+plotProfile --yMin 0 -m ./dn/dn_gene_H3K4me2_region.gz --perGroup -out ./dn/dn_gene_H3K4me2_region.pdf
