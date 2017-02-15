@@ -1,0 +1,11 @@
+library(DESeq2)
+countData <- read.table("/Volumes/myMAC/asxl1sfRNAseq/axsl1SF_rawcount1.txt", row.names=1, stringsAsFactors=FALSE,header = 1)
+colData <- read.table("/Volumes/myMAC/asxl1sfRNAseq/anno1.txt", row.names=1,header = 1)
+dds <- DESeqDataSetFromMatrix(countData = countData,colData = colData,design = ~ condition)
+rld <- rlogTransformation(dds)
+
+
+
+dds <- DESeq(dds)
+res05 <- results(dds,alpha = 0.05)
+#write.csv(as.data.frame(res05),file = "/Volumes/myMAC/asxl1sfRNAseq/asxl1SF_results.csv")
