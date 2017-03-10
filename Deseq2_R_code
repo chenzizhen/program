@@ -1,11 +1,20 @@
-library(DESeq2)
-countData <- read.table("/Volumes/myMAC/asxl1sfRNAseq/axsl1SF_rawcount1.txt", row.names=1, stringsAsFactors=FALSE,header = 1)
-colData <- read.table("/Volumes/myMAC/asxl1sfRNAseq/anno1.txt", row.names=1,header = 1)
-dds <- DESeqDataSetFromMatrix(countData = countData,colData = colData,design = ~ condition)
-rld <- rlogTransformation(dds)
-
-
-
 dds <- DESeq(dds)
 res05 <- results(dds,alpha = 0.05)
-#write.csv(as.data.frame(res05),file = "/Volumes/myMAC/asxl1sfRNAseq/asxl1SF_results.csv")
+write.csv(as.data.frame(res05),file = "/Volumes/myMAC/asxl1KORNAseq/DEseq2/asxl1SF_results.csv")
+res05
+summary(res05)
+sum(res05$padj < 0.1,na.rm = 1)
+plotMA(res05,main="DESeq2",ylim=c(-3,3))
+plotCounts(dds,gene = 2172,intgroup = "condition")
+rld <- rlog(dds,blind = 0)
+head(assay(rld))
+write.csv(as.data.frame(assay(rld)),file = "/Volumes/myMAC/asxl1KORNAseq/DEseq2/asxl1SF_rld.csv")
+sampleDist <- dist(t(assay(rld)))
+library("RColorBrewer")
+sampleDistMatrix <- as.matrix(sampleDist)
+rownames(sampleDistMatrix) <- paste(rld$condition)
+colnames(sampleDistMatrix) <- NULL
+colors <- colorRampPalette( rev(brewer.pal(9, "Blues")) )(255)
+library(pheatmap)
+pheatmap(sampleDistMatrix,clustering_distance_rows=sampleDist,clustering_distance_cols=sampleDist,col=colors)
+plotPCA(rld, intgroup=c("condition"))
