@@ -1,0 +1,7 @@
+up <- read.delim("/Volumes/myMAC/asxl1chipseq/zp/travelingratio/binduptr.txt", row.names=1)
+View(up)
+attach(up)
+plot(wttrr,WTper,pch = 19,cex = .1,col = "blue",xaxt = "n",xlim = c(0,5))
+lines(kotrr,KOper,type = "p",cex = .1,col = "green")
+axis(1,at = c(0:5),labels = c(0:5))
+detach(up)
