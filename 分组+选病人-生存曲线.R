@@ -1,4 +1,6 @@
 load("c6RData")
+library("survival")
+library("survminer")
 H <- coef(result[[3]])
 survival <- read.delim("~/Desktop/czz/生信文章/beataml/survival1.txt", stringsAsFactors=FALSE)
 H <- t(H)
@@ -13,9 +15,9 @@ group=result$group
 distanceMatrix<-result$distanceMatrix
 p_value=survAnalysis(mainTitle = "AML",time,status,group,distanceMatrix,similarity = 1)
 i<-cbind.data.frame(ID,time,status,group,stringsAsFactors=0)
+
 FSpatient <- read.csv("./patients/a.txt", sep="")
 i1<-merge(FSpatient,i,by.x="LabId",by.y="ID")
-time1<-as.integer(i1[,2])
-status1<-as.integer(i1[,3])
-group1<-as.integer(i1[,4])
-p_value=survAnalysis(mainTitle = "AML",time1,status1,group1,distanceMatrix,similarity = 1)
+Sur <- Surv(i1$time/365*12, i1$status)
+sfit <- survfit(Sur ~ group, data = i1)
+ggsurvplot(sfit,pval=TRUE,palette = "jco",pval.method = T)+labs(x = "a")
