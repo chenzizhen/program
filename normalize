@@ -1,0 +1,78 @@
+log10train <- log10(2^(t(beatAML[,3:length(beatAML)]-0.999999)))      # 提取基因表达数据并转置
+keep <- rowSums(log10train>=log10(1)) >=ncol(log10train)*0.8      # 过滤掉低表达超过80%样本的基因
+log10train <- log10train[keep,]
+log10train <- data.frame(times=beatAML$times, status=beatAML$status,t(log10train))
+
+
+log10test <- log10(2^(t(tcgaaml[,3:length(tcgaaml)]-0.999999)))      # 提取基因表达数据并转置
+keep <- rowSums(log10test>=log10(1)) >=ncol(log10test)*0.8      # 过滤掉低表达超过80%样本的基因
+log10test <- log10test[keep,]
+log10test <- data.frame(times=tcgaaml$times, status=tcgaaml$status,t(log10test))
+
+#log2transquantile
+log2train <- log2(2^(t(beatAML[,3:length(beatAML)]-0.999999)))      # 提取基因表达数据并转置
+keep <- rowSums(log2train>=log2(4)) >=ncol(log2train)*0.8      # 过滤掉低表达超过80%样本的基因
+log2train <- log2train[keep,]
+log2train2 <- normalize.quantiles(as.matrix(log2train))
+colnames(log2train2)<-colnames(log2train)
+rownames(log2train2)<-rownames(log2train)
+log2quantrain <- data.frame(times=beatAML$times, status=beatAML$status,t(log2train2))
+
+
+
+log2test <- log2(2^(t(tcgaaml[,3:length(tcgaaml)]-0.999999)))      # 提取基因表达数据并转置
+keep <- rowSums(log2test>=log2(1)) >=ncol(log2test)*0.8      # 过滤掉低表达超过80%样本的基因
+log2test <- log2test[keep,]
+log2test2 <- normalize.quantiles(log2test)
+colnames(log2test2)<-colnames(log2test)
+rownames(log2test2)<-rownames(log2test)
+log2quantest <- data.frame(times=tcgaaml$times, status=tcgaaml$status,t(log2test))
+
+
+covariates<-as.vector(colnames(log10train[3:ncol(log10train)]))#获取基因名称
+univ_formulas <- sapply(covariates,function(x) as.formula(paste('Surv(times, status)~', x)))
+univ_models <- lapply( univ_formulas, function(x){coxph(x, data = log10train)})
+univ_results <- lapply(univ_models,
+                       function(x){ 
+                          x <- summary(x)
+                          p.value<-signif(x$wald["pvalue"], digits=2)
+                          wald.test<-signif(x$wald["test"], digits=2)
+                          beta<-signif(x$coef[1], digits=2);#coeficient beta
+                          HR <-signif(x$coef[2], digits=2);#exp(beta)
+                          HR.confint.lower <- signif(x$conf.int[,"lower .95"],2)
+                          HR.confint.upper <- signif(x$conf.int[,"upper .95"],2)
+                          HR.conf <- paste0(" (", HR.confint.lower, "-", HR.confint.upper, ")")
+                          res<-c(beta, HR, HR.conf,wald.test, p.value)
+                          names(res)<-c("beta","HR","95% CI for HR","wald.test", "p.value")
+                          return(res)
+                          #return(exp(cbind(coef(x),confint(x))))
+                         })
+res <- t(as.data.frame(univ_results, check.names = FALSE))
+res<-as.data.frame(res)
+res$HR<-as.numeric(as.character(res$HR))
+res$p.value<-as.numeric(as.character(res$p.value))
+log10train_Uni_pvalue <- na.omit(res[res$p.value <= 0.05,])
+
+covariates<-as.vector(colnames(log10test[3:ncol(log10test)]))#获取基因名称
+univ_formulas <- sapply(covariates,function(x) as.formula(paste('Surv(times, status)~', x)))
+univ_models <- lapply( univ_formulas, function(x){coxph(x, data = log10test)})
+univ_results <- lapply(univ_models,
+                       function(x){ 
+                          x <- summary(x)
+                          p.value<-signif(x$wald["pvalue"], digits=2)
+                          wald.test<-signif(x$wald["test"], digits=2)
+                          beta<-signif(x$coef[1], digits=2);#coeficient beta
+                          HR <-signif(x$coef[2], digits=2);#exp(beta)
+                          HR.confint.lower <- signif(x$conf.int[,"lower .95"],2)
+                          HR.confint.upper <- signif(x$conf.int[,"upper .95"],2)
+                          HR.conf <- paste0(" (", HR.confint.lower, "-", HR.confint.upper, ")")
+                          res<-c(beta, HR, HR.conf,wald.test, p.value)
+                          names(res)<-c("beta","HR","95% CI for HR","wald.test", "p.value")
+                          return(res)
+                          #return(exp(cbind(coef(x),confint(x))))
+                         })
+res <- t(as.data.frame(univ_results, check.names = FALSE))
+res<-as.data.frame(res)
+res$HR<-as.numeric(as.character(res$HR))
+res$p.value<-as.numeric(as.character(res$p.value))
+log10test_Uni_pvalue <- na.omit(res[res$p.value <= 0.05,])
